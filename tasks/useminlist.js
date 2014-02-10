@@ -36,12 +36,13 @@ module.exports = function(grunt) {
                 grunt.log.writeln(msg);
             });
             proc.blocks.forEach(function(block) {
+                //console.log(block.type);
+                //console.log(block.dest);
                 if (block.type === options.type) {
-                    var key = block.dest.split('/');
+                    var key = block.dest.split('\\');
                     key = key[key.length-1].split('.')[0];
+
                     fileList[key]=block.src;
-
-
                     if(options.extraction){
                         grunt.file.write(options.extraction.path+key+'.'+options.extraction.templateType, block.raw.join('\n').replace(/src=\"/g,'src="'+options.extraction.srcAppend));
                     }
