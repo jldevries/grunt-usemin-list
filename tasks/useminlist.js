@@ -9,13 +9,13 @@
 'use strict';
 var path = require('path');
 
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
 
     var HTMLProcessor = require('../lib/htmlprocessor.js');
 
 
-    grunt.registerMultiTask('useminlist', 'Using HTML markup as the primary source of information', function() {
+    grunt.registerMultiTask('useminlist', 'Using HTML markup as the primary source of information', function () {
         var options = this.options();
         // collect files
         var files = grunt.file.expand({
@@ -24,37 +24,37 @@ module.exports = function(grunt) {
         var dest = options.dest;
         var fileList = {};
 
-        files = files.map(function(filepath) {
+        files = files.map(function (filepath) {
             return {
                 path: filepath,
                 body: grunt.file.read(filepath)
             };
         });
 
-        files.forEach(function(file) {
-            var proc = new HTMLProcessor(path.dirname(file.path), dest, file.body, {}, function(msg) {
+        files.forEach(function (file) {
+            var proc = new HTMLProcessor(path.dirname(file.path), dest, file.body, {}, function (msg) {
                 grunt.log.writeln(msg);
             });
-            proc.blocks.forEach(function(block) {
-                //console.log(block.type);
-                //console.log(block.dest);
-                if (block.type === options.type) {
-                    var key = block.dest.split('\\');
-                    key = key[key.length-1].split('.')[0];
+            // figure out the sep for each platform
+            var separator = (process.platform === 'win32') ? '\\' : '/';
 
-                    fileList[key]=block.src;
-                    if(options.extraction){
-                        grunt.file.write(options.extraction.path+key+'.'+options.extraction.templateType, block.raw.join('\n').replace(/src=\"/g,'src="'+options.extraction.srcAppend));
+            proc.blocks.forEach(function (block) {
+                if (block.type === options.type) {
+                    var key = block.dest.split(separator);
+                    key = key[key.length - 1].split('.')[0];
+
+                    fileList[key] = block.src;
+                    if (options.extraction) {
+                        grunt.file.write(options.extraction.path + key + '.' + options.extraction.templateType, block.raw.join('\n').replace(/src=\"/g, 'src="' + options.extraction.srcAppend));
                     }
                 }
 
             });
-            //console.log(proc.blocks);
         });
-        grunt.file.write(dest, JSON.stringify(fileList,{},4));
-        if(options.log){
+        grunt.file.write(dest, JSON.stringify(fileList, {}, 4));
+        if (options.log) {
             console.log(fileList);
-            console.log('File list object saved at '+dest);
+            console.log('File list object saved at ' + dest);
         }
     });
 };
