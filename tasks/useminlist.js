@@ -35,7 +35,7 @@ module.exports = function (grunt) {
             var proc = new HTMLProcessor(path.dirname(file.path), dest, file.body, {}, function (msg) {
                 grunt.log.writeln(msg);
             });
-            // figure out the sep for each platform
+            // figure out the sep for each platform 
             var separator = (process.platform === 'win32') ? '\\' : '/';
 
             proc.blocks.forEach(function (block) {
